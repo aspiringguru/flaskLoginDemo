@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, redirect, url_for, request
+from flask import Blueprint, render_template, redirect, url_for, request, flash
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import login_user
 from .models import User
 from . import db
 
@@ -9,6 +10,31 @@ auth = Blueprint('auth', __name__)
 def login():
     print("@auth.route > login")
     return render_template('login.html')
+
+@auth.route('/login', methods=['POST'])
+def login_post():
+    print("@auth.route > /login > def login_post()")
+    # login code goes here
+    email = request.form.get('email')
+    password = request.form.get('password')
+    remember = True if request.form.get('remember') else False
+    print("email:", email)
+    print("password:", password)
+    print("remember:", remember)
+    user = User.query.filter_by(email=email).first()
+    print("after checking match in database, user:", user)
+    # check if user actually exists
+    # take the user supplied password, hash it, and compare it to the hashed password in database
+    if not user or not check_password_hash(user.password, password):
+        print("user and password match - failed.")
+        flash('Please check your login details and try again.')
+        return redirect(url_for('auth.login')) # if user doesn't exist or password is wrong, reload the page
+    else:
+        print("user and password match - OK, redir to profile")
+    print("now flask_login.login_user with user="+str(user)+", and remember="+str(remember))
+    login_user(user, remember=remember)
+    # if the above check passes, then we know the user has the right credentials
+    return redirect(url_for('main.profile'))
 
 @auth.route('/signup')
 def signup():

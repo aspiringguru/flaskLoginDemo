@@ -92,3 +92,5 @@ sqlite3 project/db.sqlite
 
 
 https://www.sqlitetutorial.net/sqlite-tutorial/sqlite-show-tables/
+
+https://flask-login.readthedocs.io/en/latest/
