@@ -82,5 +82,13 @@ the code
 from project import db
 ```
 imports project/__init__.py which initializes object db
- 
+
 this creates the sqlite database file db.sqlite defined in __init__.py
+
+- command line access sqlite3 datbase
+sqlite3 project/db.sqlite
+- list tables
+.tables
+
+
+https://www.sqlitetutorial.net/sqlite-tutorial/sqlite-show-tables/
