@@ -1,6 +1,8 @@
 # Project Title
 
 Simple demo working through flask-login using session management
+based on
+https://www.digitalocean.com/community/tutorials/how-to-add-authentication-to-your-app-with-flask-login
 
 ## Getting Started
 
