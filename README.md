@@ -64,11 +64,23 @@ http://localhost:5000/login
 http://localhost:5000/signup
 http://localhost:5000/logout
 http://localhost:5000/profile
-
-for unknown reasons. when main.py, auth.py and __init__.py are updated, changes do not appear in browser or print outputs.
-
-
-python app.py
-http://localhost:5000/
-
 ```
+version with templates added.
+https://github.com/aspiringguru/flaskLoginDemo/tree/f20ca2e9efb7f0c7a66bffdb83a3f40e4261549e
+now setup the database.
+```
+from project import db, create_app
+db.create_all(app=create_app()) # pass the create_app result so Flask-SQLAlchemy gets the configuration.
+```
+within __init__.py
+```
+db = SQLAlchemy()
+def create_app():
+```
+the code
+```
+from project import db
+```
+imports project/__init__.py which initializes object db
+ 
+this creates the sqlite database file db.sqlite defined in __init__.py
