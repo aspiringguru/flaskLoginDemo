@@ -1,4 +1,4 @@
-from flask import Flask__
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import os
 
@@ -6,7 +6,7 @@ import os
 db = SQLAlchemy()
 
 def create_app():
-    print("create_app():start")
+    print("create_app():start__xx")
     app = Flask(__name__)
 
     SECRET_KEY = os.urandom(32)
@@ -23,5 +23,5 @@ def create_app():
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
     #
-    print("create_app():end")
+    print("create_app():end__xx")
     return app
