@@ -92,7 +92,14 @@ sqlite3 project/db.sqlite
 - list tables
 .tables
 
-
 https://www.sqlitetutorial.net/sqlite-tutorial/sqlite-show-tables/
-
 https://flask-login.readthedocs.io/en/latest/
+
+
+to setup access from external domain ie.
+http://bmatthewtaylor.duckdns.org/
+on router - setup port forwarding.
+192.168.1.1 > virtual servers
+login to duckdns.org
+confirm current external ip is registered on duckdns
+check flask port matches virtual server (exports in start.sh)

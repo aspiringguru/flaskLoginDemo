@@ -15,6 +15,8 @@ def create_app():
     app.config['SECRET_KEY'] = SECRET_KEY
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    #app.config['SERVER_NAME']="127.0.0.1:5000"#do not use causes problems?
+    #nbb: this is how we set port export FLASK_RUN_PORT=8000
 
     db.init_app(app)
 

@@ -18,9 +18,11 @@ def login_post():
     email = request.form.get('email')
     password = request.form.get('password')
     remember = True if request.form.get('remember') else False
+    remoteip = request.remote_addr
     print("email:", email)
     print("password:", password)
     print("remember:", remember)
+    print("remoteip:", remoteip)
     user = User.query.filter_by(email=email).first()
     print("after checking match in database, user:", user)
     # check if user actually exists
