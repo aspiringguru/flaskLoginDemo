@@ -5,6 +5,7 @@ import os
 
 # init SQLAlchemy so we can use it later in our models
 db = SQLAlchemy()
+print("__init__.py, db=", db)
 
 def create_app():
     print("create_app():start__xx")
@@ -40,3 +41,8 @@ def create_app():
     #
     print("create_app():end__xx")
     return app
+
+
+print("db.create_all start")
+db.create_all(app=create_app())
+print("db.create_all completed")
