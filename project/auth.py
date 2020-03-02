@@ -1,8 +1,10 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required
-from .models import User
+from .models import User, LogonHistory
 from . import db
+from datetime import datetime
+import json
 
 auth = Blueprint('auth', __name__)
 
@@ -24,18 +26,65 @@ def login_post():
     print("remember:", remember)
     print("remoteip:", remoteip)
     user = User.query.filter_by(email=email).first()
-    print("after checking match in database, user:", user)
+    last_login = LogonHistory.query.filter_by(email=email, success=True).order_by(LogonHistory.date.desc()).first() #.limit(5).all()
+    if last_login:
+        print("last_login:", last_login)
+        print("type(last_login):", type(last_login))
+        print("last_login:", last_login,
+                    last_login.user_id,
+                    last_login.email,
+                    last_login.ipaddress,
+                    last_login.success,
+                    last_login.date)
+        last_failed_login = LogonHistory.query.filter_by(email=email, success=False).filter(LogonHistory.date>last_login.date).order_by(LogonHistory.date.desc()).limit(5).all()
+        if last_failed_login:
+            print("last_failed_login:", last_failed_login)
+            print("len(last_failed_login):", len(last_failed_login))
+    else:
+        print("No previous login attempts for email=", email)
+    print("user found in database by email, user:"+str(user))
     # check if user actually exists
     # take the user supplied password, hash it, and compare it to the hashed password in database
+    # werkzeug.security.check_password_hash
     if not user or not check_password_hash(user.password, password):
         print("user and password match - failed.")
         flash('Please check your login details and try again.')
+        #user_id, email, ipaddress, success, date
+        new_login_attempt = LogonHistory(user_id=None, email=email, ipaddress=remoteip, success=False, date=datetime.now())
+        # add the new user to the database
+        db.session.add(new_login_attempt)
+        db.session.commit()
         return redirect(url_for('auth.login')) # if user doesn't exist or password is wrong, reload the page
     else:
-        print("user and password match - OK, redir to profile")
+        print("user and password match - OK, redir to profile, user:"+str(user) +", user.id:"+str(user.id))
     print("now flask_login.login_user with user="+str(user)+", and remember="+str(remember))
+    print("user.id:", user.id)
+    #record successful login in database.
+    new_login_attempt = LogonHistory(user_id=user.id, email=email, ipaddress=remoteip, success=True, date=datetime.now())
+    # add the new user to the database
+    db.session.add(new_login_attempt)
+    db.session.commit()
+    #now get count of unsuccessful logins.
+    failed_login_count=0
+    #flask_login.login_user
+    #, failed_login_count=failed_login_count
     login_user(user, remember=remember)
     # if the above check passes, then we know the user has the right credentials
+    num_failed_logins_since_last_login = len(last_failed_login)
+    print("num_failed_logins_since_last_login=", num_failed_logins_since_last_login)
+    if num_failed_logins_since_last_login>0:
+        print("num_failed_logins_since_last_login>0")
+
+    temp = str(last_login.date.strftime("%d/%b/%Y, %H:%M:%S"))
+    print("last_login.date = ", str(temp))
+    messages = json.dumps({"last_login_date":temp, "num_failed_logins_since_last_login":num_failed_logins_since_last_login })
+    session['messages'] = messages
+    #possibly move this up to lock account if x failed logins since last valid login.
+    num_failed_logins_since_last_login = len(last_failed_login)
+    print("num_failed_logins_since_last_login=", num_failed_logins_since_last_login)
+    if num_failed_logins_since_last_login>0:
+        print("num_failed_logins_since_last_login>0")
+        session['num_failed_logins_since_last_login'] = num_failed_logins_since_last_login
     return redirect(url_for('main.profile'))
 
 @auth.route('/signup')

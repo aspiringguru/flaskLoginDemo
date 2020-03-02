@@ -3,6 +3,8 @@
 {% block content %}
 <h1 class="title">
   Welcome, {{ name }}!<br>
-  {{ email }}
+  {{ email }}<br>
+  your last login was on {{ messages['last_login_date'] }}<br>
+  # of failed logins since last login : {{ messages['num_failed_logins_since_last_login'] }}
 </h1>
 {% endblock %}

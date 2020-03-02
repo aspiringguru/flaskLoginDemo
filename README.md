@@ -103,3 +103,9 @@ on router - setup port forwarding.
 login to duckdns.org
 confirm current external ip is registered on duckdns
 check flask port matches virtual server (exports in start.sh)
+
+
+todo : bootstrap to make fit on various device sizes.
+display data after login
+add foreign key referenced table
+collect data from another source
